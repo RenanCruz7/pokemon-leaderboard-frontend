@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+
 interface Run {
   id: number
   game: string
@@ -14,6 +16,8 @@ const sample: Run[] = [
 ]
 
 export const LeaderboardTable = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col gap-6">
       <div className="w-full bg-component-light dark:bg-component-dark p-4 rounded-lg border border-border-light dark:border-border-dark flex flex-col md:flex-row items-center gap-4">
@@ -52,7 +56,11 @@ export const LeaderboardTable = () => {
             </thead>
             <tbody>
               {sample.map((row) => (
-                <tr key={row.id} className="border-b border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors">
+                <tr 
+                  key={row.id} 
+                  onClick={() => navigate(`/run/${row.id}`)}
+                  className="border-b border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors cursor-pointer"
+                >
                   <td className="px-6 py-4 font-bold text-center">{row.id}</td>
                   <td className="px-6 py-4"><div className="flex items-center gap-3"><span className="font-medium">{row.game}</span></div></td>
                   <td className="px-6 py-4 font-mono font-medium">{row.time}</td>
