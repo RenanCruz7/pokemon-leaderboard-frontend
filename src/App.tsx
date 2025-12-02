@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { NavBar, Footer } from './components/layout'
 import { LeaderboardPage } from './features/leaderboard'
 import { RunDetailsPage } from './features/run-details'
+import { SubmitRunPage } from './features/submit-run'
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LeaderboardPage />} />
           <Route path="/run/:id" element={<RunDetailsPage />} />
+          <Route path="/submit" element={<SubmitRunPage />} />
         </Routes>
         <Footer />
       </div>
