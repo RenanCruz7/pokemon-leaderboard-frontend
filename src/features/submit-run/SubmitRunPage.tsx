@@ -1,29 +1,22 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const SubmitRunPage = () => {
+function SubmitRunPage() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    gameName: '',
-    runTime: '',
-    pokedexStatus: '',
-    pokemonTeam: '',
-    notes: ''
-  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      gameName: formData.get('gameName'),
+      runTime: formData.get('runTime'),
+      pokedexStatus: formData.get('pokedexStatus'),
+      pokemonTeam: formData.get('pokemonTeam'),
+      notes: formData.get('notes')
+    };
+    console.log('Form submitted:', data);
     // Aqui você pode adicionar a lógica para enviar os dados para o backend
     alert('Run submetida com sucesso!');
     navigate('/');
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
   };
 
   return (
@@ -51,8 +44,6 @@ export const SubmitRunPage = () => {
                 type="text"
                 id="gameName"
                 name="gameName"
-                value={formData.gameName}
-                onChange={handleChange}
                 required
                 maxLength={100}
                 placeholder="Ex: Pokémon Emerald"
@@ -72,8 +63,6 @@ export const SubmitRunPage = () => {
                   type="text"
                   id="runTime"
                   name="runTime"
-                  value={formData.runTime}
-                  onChange={handleChange}
                   required
                   pattern="[0-9]{2}:[0-5][0-9]"
                   placeholder="HH:MM"
@@ -92,8 +81,6 @@ export const SubmitRunPage = () => {
                   type="number"
                   id="pokedexStatus"
                   name="pokedexStatus"
-                  value={formData.pokedexStatus}
-                  onChange={handleChange}
                   min="1"
                   placeholder="Ex: 151"
                   className="form-input block w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-sm focus:border-primary focus:ring-primary/50"
@@ -114,8 +101,6 @@ export const SubmitRunPage = () => {
               <textarea
                 id="pokemonTeam"
                 name="pokemonTeam"
-                value={formData.pokemonTeam}
-                onChange={handleChange}
                 rows={3}
                 placeholder="Ex: Charizard, Blastoise, Venusaur, Pikachu, Snorlax, Dragonite"
                 className="form-textarea block w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-sm focus:border-primary focus:ring-primary/50"
@@ -133,8 +118,6 @@ export const SubmitRunPage = () => {
                 type="text"
                 id="notes"
                 name="notes"
-                value={formData.notes}
-                onChange={handleChange}
                 maxLength={100}
                 placeholder="Detalhes adicionais (opcional)"
                 className="form-input block w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-sm focus:border-primary focus:ring-primary/50"
@@ -155,6 +138,6 @@ export const SubmitRunPage = () => {
       </div>
     </div>
   );
-};
+}
 
 export default SubmitRunPage;

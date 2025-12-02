@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-export const NavBar = () => {
+function NavBar() {
   const navigate = useNavigate();
 
   return (
@@ -33,7 +33,7 @@ export const NavBar = () => {
         </button>
       </div>
     </header>
-  )
+  );
 }
 
-export default NavBar
+export default NavBar;

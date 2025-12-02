@@ -40,7 +40,7 @@ const mockRunsData: { [key: string]: RunDetailsData } = {
   }
 };
 
-export const RunDetailsPage = () => {
+function RunDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
@@ -119,6 +119,6 @@ export const RunDetailsPage = () => {
       </div>
     </main>
   );
-};
+}
 
 export default RunDetailsPage;

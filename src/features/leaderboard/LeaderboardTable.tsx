@@ -15,7 +15,7 @@ const sample: Run[] = [
   { id: 3, game: 'Pokémon Black 2', time: '51:05', pokedex: '301/301', team: 'Samurott, Krookodile, Haxorus, Arcanine, Metagross, Braviary', user: 'BrockRox' },
 ]
 
-export const LeaderboardTable = () => {
+function LeaderboardTable() {
   const navigate = useNavigate();
 
   return (
@@ -99,7 +99,7 @@ export const LeaderboardTable = () => {
         </ul>
       </nav>
     </div>
-  )
+  );
 }
 
-export default LeaderboardTable
+export default LeaderboardTable;
