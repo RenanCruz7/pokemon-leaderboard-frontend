@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
+import type { FormEvent } from 'react';
 
-function SubmitRunPage() {
+export const SubmitRunPage = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -138,6 +139,4 @@ function SubmitRunPage() {
       </div>
     </div>
   );
-}
-
-export default SubmitRunPage;
+};

@@ -1,21 +1,14 @@
 import { useNavigate } from 'react-router-dom';
+import { memo } from 'react';
+import type { Run } from '../../types';
 
-interface Run {
-  id: number
-  game: string
-  time: string
-  pokedex: string
-  team: string
-  user: string
-}
-
-const sample: Run[] = [
+const sampleRuns: Run[] = [
   { id: 1, game: 'Pokémon Platinum', time: '42:10', pokedex: '210/493', team: 'Infernape, Staraptor, Luxray, Garchomp, Floatzel, Lucario', user: 'AshK' },
   { id: 2, game: 'Pokémon Emerald', time: '48:30', pokedex: '198/386', team: 'Swampert, Gardevoir, Breloom, Crobat, Salamence, Manectric', user: 'Misty' },
   { id: 3, game: 'Pokémon Black 2', time: '51:05', pokedex: '301/301', team: 'Samurott, Krookodile, Haxorus, Arcanine, Metagross, Braviary', user: 'BrockRox' },
-]
+];
 
-function LeaderboardTable() {
+export const LeaderboardTable = memo(() => {
   const navigate = useNavigate();
 
   return (
@@ -55,7 +48,7 @@ function LeaderboardTable() {
               </tr>
             </thead>
             <tbody>
-              {sample.map((row) => (
+              {sampleRuns.map((row) => (
                 <tr 
                   key={row.id} 
                   onClick={() => navigate(`/run/${row.id}`)}
@@ -100,6 +93,6 @@ function LeaderboardTable() {
       </nav>
     </div>
   );
-}
+});
 
-export default LeaderboardTable;
+LeaderboardTable.displayName = 'LeaderboardTable';

@@ -1,4 +1,6 @@
-function Footer() {
+import { memo } from 'react';
+
+export const Footer = memo(() => {
   return (
     <footer className="w-full border-t border-border-light dark:border-border-dark bg-component-light dark:bg-component-dark mt-12">
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -10,6 +12,6 @@ function Footer() {
       </div>
     </footer>
   );
-}
+});
 
-export default Footer;
+Footer.displayName = 'Footer';

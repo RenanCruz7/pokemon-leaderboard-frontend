@@ -1,73 +1,93 @@
-# React + TypeScript + Vite
+# Pokémon Runs Leaderboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Uma aplicação moderna de leaderboard para speedruns de jogos Pokémon, construída com React 19, TypeScript e Tailwind CSS.
 
-Currently, two official plugins are available:
+## 🚀 Tecnologias
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19.2.0** - Última versão com as novas features
+- **TypeScript 5.9.3** - Tipagem estática forte
+- **Vite 7.2.4** - Build tool ultrarrápido
+- **React Router 7.9.6** - Roteamento moderno
+- **Tailwind CSS 3.4** - Estilização utilitária
+- **ESLint** - Linting configurado para React 19
 
-## React Compiler
+## ✨ Melhores Práticas Implementadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### React 19
+- ✅ **Named Exports** - Todos os componentes usam named exports para melhor tree-shaking
+- ✅ **React.memo** - Componentes otimizados com memoização onde apropriado
+- ✅ **Type Safety** - Tipagem completa com TypeScript e interfaces centralizadas
+- ✅ **Component Optimization** - Componentes funcionais puros e performáticos
+- ✅ **Strict Mode** - Habilitado para detectar problemas potenciais
 
-## Expanding the ESLint configuration
+### Arquitetura
+- 📁 **Organização por Features** - Estrutura modular e escalável
+- 🎯 **Single Responsibility** - Cada componente tem uma única responsabilidade
+- 🔒 **Type-only Imports** - Uso correto de `import type` para tipos TypeScript
+- 🎨 **Design System** - Cores e estilos consistentes via Tailwind
+- ♿ **Acessibilidade** - Labels semânticas e ARIA attributes
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Performance
+- ⚡ **Code Splitting** - Lazy loading automático via Vite
+- 🎯 **Tree Shaking** - Eliminação de código morto
+- 💾 **Build Otimizado** - Bundle minificado e comprimido
+- 🔥 **HMR** - Hot Module Replacement para desenvolvimento
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📦 Instalação
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```bash
+# Instalar dependências
+npm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Desenvolvimento
+npm run dev
+
+# Build para produção
+npm run build
+
+# Preview do build
+npm run preview
+
+# Linting
+npm run lint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🏗️ Estrutura do Projeto
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```
+src/
+├── components/        # Componentes reutilizáveis
+│   └── layout/       # Componentes de layout (NavBar, Footer)
+├── features/         # Features organizadas por domínio
+│   ├── leaderboard/ # Tabela de leaderboard
+│   ├── run-details/ # Detalhes de uma run
+│   └── submit-run/  # Formulário de submissão
+├── types/           # Tipos TypeScript compartilhados
+├── App.tsx          # Componente raiz
+├── main.tsx         # Entry point
+└── index.css        # Estilos globais (Tailwind)
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🎯 Features
+
+- 📊 **Leaderboard** - Visualização de melhores tempos
+- 🔍 **Busca e Filtros** - Pesquisa por usuário ou Pokémon
+- 📝 **Submissão de Runs** - Formulário completo para envio
+- 👁️ **Detalhes** - Visualização detalhada de cada run
+- 🌙 **Dark Mode** - Suporte a tema escuro
+- 📱 **Responsivo** - Design adaptado para mobile
+
+## 🔄 Melhorias Recentes
+
+- Removido código não utilizado (Header.tsx)
+- Padronizado todos exports para named exports
+- Adicionado React.memo em componentes apropriados
+- Centralizado tipos TypeScript em `/types`
+- Atualizado ESLint para React 19
+- Melhorado validação de tipos com `import type`
+- Otimizado performance geral da aplicação
+
+## 📝 Licença
+
+MIT
 ```

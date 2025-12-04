@@ -1,6 +1,6 @@
-import LeaderboardTable from './LeaderboardTable';
+import { LeaderboardTable } from './LeaderboardTable';
 
-function LeaderboardPage() {
+export const LeaderboardPage = () => {
   return (
     <div className="flex-1 p-4 sm:p-6 lg:p-8">
       <div className="flex flex-col gap-6 max-w-7xl mx-auto">
@@ -17,6 +17,4 @@ function LeaderboardPage() {
       </div>
     </div>
   );
-}
-
-export default LeaderboardPage;
+};

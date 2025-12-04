@@ -1,16 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import type { RunDetails } from '../../types';
 
-interface RunDetailsData {
-  id: number;
-  game: string;
-  time: string;
-  pokedex: number;
-  team: string[];
-  user: string;
-  notes: string;
-}
-
-const mockRunsData: { [key: string]: RunDetailsData } = {
+const mockRunsData: Record<string, RunDetails> = {
   '1': {
     id: 1,
     game: 'Pokémon Platinum',
@@ -40,7 +31,7 @@ const mockRunsData: { [key: string]: RunDetailsData } = {
   }
 };
 
-function RunDetailsPage() {
+export const RunDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
@@ -119,6 +110,4 @@ function RunDetailsPage() {
       </div>
     </main>
   );
-}
-
-export default RunDetailsPage;
+};

@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
+import { memo } from 'react';
 
-function NavBar() {
+export const NavBar = memo(() => {
   const navigate = useNavigate();
 
   return (
@@ -34,6 +35,6 @@ function NavBar() {
       </div>
     </header>
   );
-}
+});
 
-export default NavBar;
+NavBar.displayName = 'NavBar';

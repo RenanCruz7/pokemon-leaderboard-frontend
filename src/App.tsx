@@ -1,10 +1,10 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { NavBar, Footer } from './components/layout'
-import { LeaderboardPage } from './features/leaderboard'
-import { RunDetailsPage } from './features/run-details'
-import { SubmitRunPage } from './features/submit-run'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { NavBar, Footer } from './components/layout';
+import { LeaderboardPage } from './features/leaderboard';
+import { RunDetailsPage } from './features/run-details';
+import { SubmitRunPage } from './features/submit-run';
 
-function App() {
+export const App = () => {
   return (
     <Router>
       <div className="min-h-screen flex flex-col">
@@ -17,7 +17,5 @@ function App() {
         <Footer />
       </div>
     </Router>
-  )
-}
-
-export default App
+  );
+};
