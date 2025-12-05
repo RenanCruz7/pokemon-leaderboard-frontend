@@ -1,14 +1,35 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { useRuns } from '../../hooks/useRuns';
+import { useState, useEffect } from 'react';
+import { useRuns, useAvailableGames } from '../../hooks/useRuns';
 
 export const LeaderboardTable = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [size] = useState(10);
-  const { runs, pagination, isLoading, error } = useRuns({ page, size, sort: 'runTime,asc' });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [gameFilter, setGameFilter] = useState('all');
+  
+  const { games, isLoading: gamesLoading } = useAvailableGames();
+  const { runs, pagination, isLoading, error } = useRuns({ 
+    page, 
+    size, 
+    sort: 'runTime,asc',
+    search: searchTerm,
+    game: gameFilter,
+  });
 
-  if (isLoading) {
+  // Debounce para busca (aguarda 500ms após o usuário parar de digitar)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchTerm(searchInput);
+      setPage(0); // Reseta para primeira página ao buscar
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  if (isLoading && runs.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
@@ -39,52 +60,134 @@ export const LeaderboardTable = () => {
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <span className="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark" style={{ fontSize: 20 }}>search</span>
             </div>
-            <input id="search-input" placeholder="Search by user or Pokémon..." className="form-input block w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark pl-10 pr-3 py-2 text-sm focus:border-primary focus:ring-primary/50" />
+            <input 
+              id="search-input" 
+              placeholder="Search by user or Pokémon..." 
+              className="form-input block w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark pl-10 pr-3 py-2 text-sm focus:border-primary focus:ring-primary/50" 
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+            {searchInput && (
+              <button
+                onClick={() => setSearchInput('')}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
+              </button>
+            )}
           </div>
         </div>
         <div className="w-full md:w-auto md:min-w-[200px]">
           <label className="sr-only" htmlFor="game-filter">Filter by game</label>
-          <select id="game-filter" className="form-select w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-sm focus:border-primary focus:ring-primary/50">
-            <option>All Games</option>
-            <option>Red/Blue/Yellow</option>
-            <option>Gold/Silver/Crystal</option>
-            <option>Ruby/Sapphire/Emerald</option>
+          <select 
+            id="game-filter" 
+            className="form-select w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-sm focus:border-primary focus:ring-primary/50"
+            value={gameFilter}
+            onChange={(e) => {
+              setGameFilter(e.target.value);
+              setPage(0); // Reseta para primeira página ao filtrar
+            }}
+            disabled={gamesLoading}
+          >
+            <option value="all">All Games</option>
+            {games.map((game) => (
+              <option key={game} value={game}>{game}</option>
+            ))}
           </select>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-border-light dark:border-border-dark bg-component-light dark:bg-component-dark">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[1000px] text-left text-sm">
-            <thead className="border-b border-border-light dark:border-border-dark text-xs uppercase text-text-secondary-light dark:text-text-secondary-dark">
-              <tr>
-                <th className="px-6 py-4 font-semibold w-12 text-center">#</th>
-                <th className="px-6 py-4 font-semibold">Game</th>
-                <th className="px-6 py-4 font-semibold">Time</th>
-                <th className="px-6 py-4 font-semibold">Pokédex</th>
-                <th className="px-6 py-4 font-semibold">Team</th>
-                <th className="px-6 py-4 font-semibold">User</th>
-              </tr>
-            </thead>
-            <tbody>
-              {runs.map((run, index) => (
-                <tr 
-                  key={run.id} 
-                  onClick={() => navigate(`/run/${run.id}`)}
-                  className="border-b border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors cursor-pointer"
-                >
-                  <td className="px-6 py-4 font-bold text-center">{page * size + index + 1}</td>
-                  <td className="px-6 py-4"><div className="flex items-center gap-3"><span className="font-medium">{run.game}</span></div></td>
-                  <td className="px-6 py-4 font-mono font-medium">{run.runTime}</td>
-                  <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{run.pokedexStatus}</td>
-                  <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{run.pokemonTeam.join(', ') || '-'}</td>
-                  <td className="px-6 py-4 font-medium">{run.user.username}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Indicador de filtros ativos */}
+      {(searchTerm || gameFilter !== 'all') && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+            Filtros ativos:
+          </span>
+          {searchTerm && (
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm">
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>search</span>
+              {searchTerm}
+              <button 
+                onClick={() => setSearchInput('')}
+                className="ml-1 hover:bg-primary/20 rounded-full"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
+              </button>
+            </span>
+          )}
+          {gameFilter !== 'all' && (
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm">
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>videogame_asset</span>
+              {gameFilter}
+              <button 
+                onClick={() => setGameFilter('all')}
+                className="ml-1 hover:bg-primary/20 rounded-full"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
+              </button>
+            </span>
+          )}
         </div>
-      </div>
+      )}
+
+      {runs.length === 0 && !isLoading ? (
+        <div className="flex items-center justify-center py-12 bg-component-light dark:bg-component-dark rounded-lg border border-border-light dark:border-border-dark">
+          <div className="text-center">
+            <span className="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark text-5xl">
+              {searchTerm || gameFilter !== 'all' ? 'search_off' : 'inbox'}
+            </span>
+            <p className="mt-4 text-text-secondary-light dark:text-text-secondary-dark font-medium">
+              {searchTerm || gameFilter !== 'all' 
+                ? 'Nenhuma run encontrada com esses filtros' 
+                : 'Nenhuma run cadastrada ainda'}
+            </p>
+            {(searchTerm || gameFilter !== 'all') && (
+              <button
+                onClick={() => {
+                  setSearchInput('');
+                  setGameFilter('all');
+                }}
+                className="mt-4 px-4 py-2 bg-primary text-background-dark rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                Limpar filtros
+              </button>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="overflow-hidden rounded-lg border border-border-light dark:border-border-dark bg-component-light dark:bg-component-dark">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[1000px] text-left text-sm">
+              <thead className="border-b border-border-light dark:border-border-dark text-xs uppercase text-text-secondary-light dark:text-text-secondary-dark">
+                <tr>
+                  <th className="px-6 py-4 font-semibold w-12 text-center">#</th>
+                  <th className="px-6 py-4 font-semibold">Game</th>
+                  <th className="px-6 py-4 font-semibold">Time</th>
+                  <th className="px-6 py-4 font-semibold">Pokédex</th>
+                  <th className="px-6 py-4 font-semibold">Team</th>
+                  <th className="px-6 py-4 font-semibold">User</th>
+                </tr>
+              </thead>
+              <tbody>
+                {runs.map((run, index) => (
+                  <tr 
+                    key={run.id} 
+                    onClick={() => navigate(`/run/${run.id}`)}
+                    className="border-b border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors cursor-pointer"
+                  >
+                    <td className="px-6 py-4 font-bold text-center">{page * size + index + 1}</td>
+                    <td className="px-6 py-4"><div className="flex items-center gap-3"><span className="font-medium">{run.game}</span></div></td>
+                    <td className="px-6 py-4 font-mono font-medium">{run.runTime}</td>
+                    <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{run.pokedexStatus}</td>
+                    <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{run.pokemonTeam.join(', ') || '-'}</td>
+                    <td className="px-6 py-4 font-medium">{run.user.username}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       <nav aria-label="Table navigation" className="flex items-center justify-between pt-6">
         <span className="text-sm font-normal text-text-secondary-light dark:text-text-secondary-dark">
