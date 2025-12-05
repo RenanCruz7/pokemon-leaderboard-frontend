@@ -1,23 +1,52 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { FormEvent } from 'react';
+import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../hooks/useToast';
+import { runsService } from '../../services/runs.service';
+import type { ApiError } from '../../types/api.types';
 
 export const SubmitRunPage = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { showToast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  // Redirecionar se não estiver autenticado
+  if (!isAuthenticated) {
+    navigate('/login');
+    return null;
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data = {
-      gameName: formData.get('gameName'),
-      runTime: formData.get('runTime'),
-      pokedexStatus: formData.get('pokedexStatus'),
-      pokemonTeam: formData.get('pokemonTeam'),
-      notes: formData.get('notes')
-    };
-    console.log('Form submitted:', data);
-    // Aqui você pode adicionar a lógica para enviar os dados para o backend
-    alert('Run submetida com sucesso!');
-    navigate('/');
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const pokemonTeamStr = formData.get('pokemonTeam') as string;
+      
+      await runsService.createRun({
+        game: formData.get('gameName') as string,
+        runTime: formData.get('runTime') as string,
+        pokedexStatus: Number(formData.get('pokedexStatus')),
+        pokemonTeam: pokemonTeamStr ? pokemonTeamStr.split(',').map(p => p.trim()).filter(Boolean) : [],
+        observation: formData.get('notes') as string || undefined,
+      });
+
+      showToast('Run submetida com sucesso! 🎉', 'success');
+      
+      // Aguardar um pouco para o usuário ver o toast antes de redirecionar
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    } catch (err) {
+      const apiError = err as { response?: { data?: ApiError } };
+      setError(apiError.response?.data?.detalhes || 'Erro ao submeter run. Tente novamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -33,6 +62,12 @@ export const SubmitRunPage = () => {
         </div>
 
         <div className="w-full bg-component-light dark:bg-component-dark p-6 sm:p-8 rounded-xl border border-border-light dark:border-border-dark">
+          {error && (
+            <div className="mb-6 p-4 bg-accent-red/10 border border-accent-red rounded-lg">
+              <p className="text-accent-red text-sm font-medium">{error}</p>
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label 
@@ -128,10 +163,20 @@ export const SubmitRunPage = () => {
             <div className="pt-4">
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 rounded-lg h-12 px-6 bg-primary text-background-dark text-base font-bold tracking-wide hover:bg-primary/90 transition-colors"
+                disabled={isSubmitting}
+                className="w-full flex items-center justify-center gap-2 rounded-lg h-12 px-6 bg-primary text-background-dark text-base font-bold tracking-wide hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Submeter Run
-                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_forward</span>
+                {isSubmitting ? (
+                  <>
+                    <div className="inline-block animate-spin rounded-full h-5 w-5 border-2 border-background-dark border-t-transparent"></div>
+                    Submetendo...
+                  </>
+                ) : (
+                  <>
+                    Submeter Run
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>arrow_forward</span>
+                  </>
+                )}
               </button>
             </div>
           </form>

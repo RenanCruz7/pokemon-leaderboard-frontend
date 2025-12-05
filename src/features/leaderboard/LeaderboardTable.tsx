@@ -1,15 +1,34 @@
 import { useNavigate } from 'react-router-dom';
-import { memo } from 'react';
-import type { Run } from '../../types';
+import { useState } from 'react';
+import { useRuns } from '../../hooks/useRuns';
 
-const sampleRuns: Run[] = [
-  { id: 1, game: 'Pokémon Platinum', time: '42:10', pokedex: '210/493', team: 'Infernape, Staraptor, Luxray, Garchomp, Floatzel, Lucario', user: 'AshK' },
-  { id: 2, game: 'Pokémon Emerald', time: '48:30', pokedex: '198/386', team: 'Swampert, Gardevoir, Breloom, Crobat, Salamence, Manectric', user: 'Misty' },
-  { id: 3, game: 'Pokémon Black 2', time: '51:05', pokedex: '301/301', team: 'Samurott, Krookodile, Haxorus, Arcanine, Metagross, Braviary', user: 'BrockRox' },
-];
-
-export const LeaderboardTable = memo(() => {
+export const LeaderboardTable = () => {
   const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+  const [size] = useState(10);
+  const { runs, pagination, isLoading, error } = useRuns({ page, size, sort: 'runTime,asc' });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+          <p className="mt-4 text-text-secondary-light dark:text-text-secondary-dark">Carregando runs...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <span className="material-symbols-outlined text-accent-red text-5xl">error</span>
+          <p className="mt-4 text-accent-red font-medium">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -48,18 +67,18 @@ export const LeaderboardTable = memo(() => {
               </tr>
             </thead>
             <tbody>
-              {sampleRuns.map((row) => (
+              {runs.map((run, index) => (
                 <tr 
-                  key={row.id} 
-                  onClick={() => navigate(`/run/${row.id}`)}
+                  key={run.id} 
+                  onClick={() => navigate(`/run/${run.id}`)}
                   className="border-b border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors cursor-pointer"
                 >
-                  <td className="px-6 py-4 font-bold text-center">{row.id}</td>
-                  <td className="px-6 py-4"><div className="flex items-center gap-3"><span className="font-medium">{row.game}</span></div></td>
-                  <td className="px-6 py-4 font-mono font-medium">{row.time}</td>
-                  <td className={`px-6 py-4 ${row.pokedex.endsWith('/301') ? 'text-primary font-bold' : 'text-text-secondary-light dark:text-text-secondary-dark'}`}>{row.pokedex}</td>
-                  <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{row.team}</td>
-                  <td className="px-6 py-4 font-medium">{row.user}</td>
+                  <td className="px-6 py-4 font-bold text-center">{page * size + index + 1}</td>
+                  <td className="px-6 py-4"><div className="flex items-center gap-3"><span className="font-medium">{run.game}</span></div></td>
+                  <td className="px-6 py-4 font-mono font-medium">{run.runTime}</td>
+                  <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{run.pokedexStatus}</td>
+                  <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{run.pokemonTeam.join(', ') || '-'}</td>
+                  <td className="px-6 py-4 font-medium">{run.user.username}</td>
                 </tr>
               ))}
             </tbody>
@@ -68,31 +87,46 @@ export const LeaderboardTable = memo(() => {
       </div>
 
       <nav aria-label="Table navigation" className="flex items-center justify-between pt-6">
-        <span className="text-sm font-normal text-text-secondary-light dark:text-text-secondary-dark">Showing <span className="font-semibold text-text-light dark:text-text-dark">1-10</span> of <span className="font-semibold text-text-light dark:text-text-dark">1000</span></span>
+        <span className="text-sm font-normal text-text-secondary-light dark:text-text-secondary-dark">
+          Showing <span className="font-semibold text-text-light dark:text-text-dark">{pagination?.numberOfElements || 0}</span> of <span className="font-semibold text-text-light dark:text-text-dark">{pagination?.totalElements || 0}</span>
+        </span>
         <ul className="inline-flex items-center -space-x-px">
           <li>
-            <a className="flex items-center justify-center px-3 h-8 ml-0 leading-tight rounded-l-lg border border-border-light dark:border-border-dark bg-component-light dark:bg-component-dark hover:bg-background-light dark:hover:bg-background-dark" href="#">
+            <button
+              onClick={() => setPage(p => Math.max(0, p - 1))}
+              disabled={pagination?.first}
+              className="flex items-center justify-center px-3 h-8 ml-0 leading-tight rounded-l-lg border border-border-light dark:border-border-dark bg-component-light dark:bg-component-dark hover:bg-background-light dark:hover:bg-background-dark disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <span className="material-symbols-outlined" style={{ fontSize: 20 }}>chevron_left</span>
-            </a>
+            </button>
           </li>
+          {pagination && Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => (
+            <li key={i}>
+              <button
+                onClick={() => setPage(i)}
+                className={`flex items-center justify-center px-3 h-8 leading-tight border border-border-light dark:border-border-dark ${
+                  page === i 
+                    ? 'bg-primary text-background-dark' 
+                    : 'bg-component-light dark:bg-component-dark hover:bg-background-light dark:hover:bg-background-dark'
+                }`}
+              >
+                {i + 1}
+              </button>
+            </li>
+          ))}
           <li>
-            <a className="flex items-center justify-center px-3 h-8 leading-tight border border-border-light dark:border-border-dark bg-primary text-background-dark" href="#">1</a>
-          </li>
-          <li>
-            <a className="flex items-center justify-center px-3 h-8 leading-tight border border-border-light dark:border-border-dark bg-component-light dark:bg-component-dark hover:bg-background-light dark:hover:bg-background-dark" href="#">2</a>
-          </li>
-          <li>
-            <a className="flex items-center justify-center px-3 h-8 leading-tight border border-border-light dark:border-border-dark bg-component-light dark:bg-component-dark hover:bg-background-light dark:hover:bg-background-dark" href="#">...</a>
-          </li>
-          <li>
-            <a className="flex items-center justify-center px-3 h-8 leading-tight rounded-r-lg border border-border-light dark:border-border-dark bg-component-light dark:bg-component-dark hover:bg-background-light dark:hover:bg-background-dark" href="#">
+            <button
+              onClick={() => setPage(p => Math.min((pagination?.totalPages || 1) - 1, p + 1))}
+              disabled={pagination?.last}
+              className="flex items-center justify-center px-3 h-8 leading-tight rounded-r-lg border border-border-light dark:border-border-dark bg-component-light dark:bg-component-dark hover:bg-background-light dark:hover:bg-background-dark disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <span className="material-symbols-outlined" style={{ fontSize: 20 }}>chevron_right</span>
-            </a>
+            </button>
           </li>
         </ul>
       </nav>
     </div>
   );
-});
+};
 
-LeaderboardTable.displayName = 'LeaderboardTable';
+export default LeaderboardTable;
