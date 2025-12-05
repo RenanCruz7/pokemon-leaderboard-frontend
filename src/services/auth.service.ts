@@ -41,4 +41,26 @@ export const authService = {
   isAuthenticated(): boolean {
     return !!this.getToken();
   },
+
+  async updateProfile(data: { username?: string; email?: string; currentPassword?: string; newPassword?: string }): Promise<User> {
+    const response = await api.patch<User>('/auth/profile', data);
+    
+    // Atualizar dados do usuário no localStorage
+    const currentUser = this.getStoredUser();
+    if (currentUser && response.data) {
+      const updatedUser = {
+        ...currentUser,
+        username: response.data.username,
+        email: response.data.email,
+      };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    }
+    
+    return response.data;
+  },
+
+  async deleteAccount(): Promise<void> {
+    await api.delete('/auth/profile');
+    this.logout();
+  },
 };

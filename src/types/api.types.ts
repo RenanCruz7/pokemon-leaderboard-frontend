@@ -32,6 +32,13 @@ export interface LoginResponse {
   role: string;
 }
 
+export interface UpdateUserRequest {
+  username?: string;
+  email?: string;
+  currentPassword?: string;
+  newPassword?: string;
+}
+
 // Run Types
 export interface Run {
   id: number;

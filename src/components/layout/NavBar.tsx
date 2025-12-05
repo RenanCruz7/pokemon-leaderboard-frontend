@@ -38,21 +38,59 @@ export const NavBar = () => {
         
         {isAuthenticated ? (
           <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-2 text-sm">
-              <span className="material-symbols-outlined text-primary" style={{ fontSize: 20 }}>account_circle</span>
-              <span className="font-medium">{user?.username}</span>
+            {/* User Menu Dropdown */}
+            <div className="relative group">
+              <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-background-light dark:hover:bg-background-dark transition-colors">
+                <span className="material-symbols-outlined text-primary" style={{ fontSize: 24 }}>account_circle</span>
+                <span className="hidden md:block font-medium text-sm">{user?.username}</span>
+                <span className="material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark" style={{ fontSize: 16 }}>
+                  expand_more
+                </span>
+              </button>
+              
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 mt-2 w-56 bg-component-light dark:bg-component-dark rounded-lg shadow-xl border border-border-light dark:border-border-dark opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="p-3 border-b border-border-light dark:border-border-dark">
+                  <p className="text-sm font-semibold text-text-light dark:text-text-dark">{user?.username}</p>
+                  <p className="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">{user?.email}</p>
+                </div>
+                
+                <div className="py-2">
+                  <button
+                    onClick={() => navigate('/profile')}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-light dark:text-text-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-primary" style={{ fontSize: 20 }}>edit</span>
+                    <span>Editar Perfil</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => navigate('/submit')}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-light dark:text-text-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors md:hidden"
+                  >
+                    <span className="material-symbols-outlined text-primary" style={{ fontSize: 20 }}>add_circle</span>
+                    <span>Submit Run</span>
+                  </button>
+                </div>
+                
+                <div className="border-t border-border-light dark:border-border-dark py-2">
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-accent-red hover:bg-accent-red/10 transition-colors"
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>logout</span>
+                    <span>Sair</span>
+                  </button>
+                </div>
+              </div>
             </div>
+
+            {/* Submit Run Button (desktop only) */}
             <button 
               onClick={() => navigate('/submit')}
-              className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-background-dark text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
+              className="hidden md:flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-background-dark text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
             >
               <span className="truncate">Submit Run</span>
-            </button>
-            <button 
-              onClick={handleLogout}
-              className="flex items-center justify-center rounded-lg h-10 px-4 border border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors"
-            >
-              <span className="material-symbols-outlined text-accent-red" style={{ fontSize: 20 }}>logout</span>
             </button>
           </div>
         ) : (

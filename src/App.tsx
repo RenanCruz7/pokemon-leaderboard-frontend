@@ -7,6 +7,7 @@ import { LeaderboardPage } from './features/leaderboard';
 import { RunDetailsPage } from './features/run-details';
 import { SubmitRunPage } from './features/submit-run';
 import { LoginPage, RegisterPage } from './features/auth';
+import { EditProfilePage } from './features/profile/EditProfilePage';
 
 export const App = () => {
   return (
@@ -21,6 +22,7 @@ export const App = () => {
               <Route path="/submit" element={<SubmitRunPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/profile" element={<EditProfilePage />} />
             </Routes>
             <Footer />
             <ToastContainer />
