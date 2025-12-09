@@ -43,9 +43,11 @@ export const LeaderboardTable = () => {
   if (error) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <span className="material-symbols-outlined text-accent-red text-5xl">error</span>
-          <p className="mt-4 text-accent-red font-medium">{error}</p>
+        <div className="text-center max-w-md">
+          <span className="material-symbols-outlined text-accent-red text-5xl">
+            error
+          </span>
+          <p className="mt-4 text-text-light dark:text-text-dark font-medium text-lg">{error}</p>
         </div>
       </div>
     );

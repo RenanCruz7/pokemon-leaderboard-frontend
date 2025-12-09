@@ -13,6 +13,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
+    // Adiciona token se existir (backend decide se é necessário)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -27,12 +28,32 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Token expirado ou inválido
+    const status = error.response?.status;
+    
+    // Token expirado ou inválido
+    if (status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      
+      // Apenas redireciona se não estiver em páginas públicas
+      const publicPaths = ['/', '/login', '/register', '/forgot-password', '/reset-password'];
+      const currentPath = window.location.pathname;
+      
+      if (!publicPaths.includes(currentPath) && !currentPath.startsWith('/run/')) {
+        window.location.href = '/login';
+      }
     }
+    
+    // Forbidden - pode ser falta de permissão ou token inválido
+    if (status === 403) {
+      // Se está tentando acessar uma rota protegida sem token
+      const token = localStorage.getItem('token');
+      if (!token) {
+        // Não redireciona, apenas deixa o componente lidar com o erro
+        console.log('Access denied - authentication may be required');
+      }
+    }
+    
     return Promise.reject(error);
   }
 );

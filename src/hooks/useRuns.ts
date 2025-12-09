@@ -75,19 +75,10 @@ export function useRuns(options?: UseRunsOptions) {
           empty: response.empty,
         });
       }
-      setPagination({
-        pageable: response.pageable,
-        totalPages: response.totalPages,
-        totalElements: response.totalElements,
-        last: response.last,
-        first: response.first,
-        size: response.size,
-        number: response.number,
-        numberOfElements: response.numberOfElements,
-        empty: response.empty,
-      });
-    } catch (err) {
+    } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar runs');
+      setRuns([]);
+      setPagination(null);
     } finally {
       setIsLoading(false);
     }
