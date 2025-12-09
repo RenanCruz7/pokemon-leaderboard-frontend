@@ -77,11 +77,9 @@ export const EditProfilePage = () => {
       const updateData: {
         username?: string;
         email?: string;
-        currentPassword?: string;
-        newPassword?: string;
       } = {};
 
-      // Adicionar apenas campos que mudaram
+      // Adicionar apenas campos que mudaram (username e email)
       if (formData.username !== user?.username) {
         updateData.username = formData.username;
       }
@@ -90,21 +88,24 @@ export const EditProfilePage = () => {
         updateData.email = formData.email;
       }
 
+      // Se houver alteração de senha, usar endpoint específico
       if (showPasswordFields && formData.currentPassword && formData.newPassword) {
-        updateData.currentPassword = formData.currentPassword;
-        updateData.newPassword = formData.newPassword;
+        await authService.changePassword(formData.currentPassword, formData.newPassword);
+        showToast('Senha alterada com sucesso! 🔒', 'success');
       }
 
-      // Se nada mudou, não faz request
-      if (Object.keys(updateData).length === 0) {
+      // Se houver alteração de username ou email, atualizar perfil
+      if (Object.keys(updateData).length > 0) {
+        const updatedUser = await authService.updateProfile(updateData);
+        setUser(updatedUser);
+        showToast('Perfil atualizado com sucesso! ✨', 'success');
+      }
+
+      // Se nada mudou
+      if (Object.keys(updateData).length === 0 && !showPasswordFields) {
         showToast('Nenhuma alteração detectada', 'info');
         return;
       }
-
-      const updatedUser = await authService.updateProfile(updateData);
-      setUser(updatedUser);
-
-      showToast('Perfil atualizado com sucesso! ✨', 'success');
       
       // Limpar campos de senha
       setFormData(prev => ({

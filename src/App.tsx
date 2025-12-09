@@ -6,7 +6,7 @@ import { ToastContainer } from './components/ui/ToastContainer';
 import { LeaderboardPage } from './features/leaderboard';
 import { RunDetailsPage } from './features/run-details';
 import { SubmitRunPage } from './features/submit-run';
-import { LoginPage, RegisterPage } from './features/auth';
+import { LoginPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage } from './features/auth';
 import { EditProfilePage } from './features/profile/EditProfilePage';
 
 export const App = () => {
@@ -22,6 +22,8 @@ export const App = () => {
               <Route path="/submit" element={<SubmitRunPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/profile" element={<EditProfilePage />} />
             </Routes>
             <Footer />

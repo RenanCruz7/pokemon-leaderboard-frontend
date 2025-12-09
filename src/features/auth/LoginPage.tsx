@@ -94,6 +94,15 @@ export const LoginPage = () => {
                 'Entrar'
               )}
             </button>
+
+            <div className="text-center">
+              <Link 
+                to="/forgot-password" 
+                className="text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+              >
+                Esqueceu sua senha?
+              </Link>
+            </div>
           </form>
 
           <div className="mt-6 text-center">
