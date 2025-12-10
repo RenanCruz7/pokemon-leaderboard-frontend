@@ -7,6 +7,8 @@ import { RunDetailsPage } from './features/run-details';
 import { SubmitRunPage } from './features/submit-run';
 import { LoginPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage } from './features/auth';
 import { EditProfilePage } from './features/profile/EditProfilePage';
+import { MyRunsPage } from './features/my-runs';
+import { StatsPage } from './features/stats';
 
 export const App = () => {
   return (
@@ -18,6 +20,8 @@ export const App = () => {
             <Route path="/" element={<LeaderboardPage />} />
             <Route path="/run/:id" element={<RunDetailsPage />} />
             <Route path="/submit" element={<SubmitRunPage />} />
+            <Route path="/my-runs" element={<MyRunsPage />} />
+            <Route path="/stats" element={<StatsPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />

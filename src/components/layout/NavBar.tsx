@@ -33,6 +33,22 @@ export const NavBar = () => {
           >
             Leaderboard
           </button>
+          {isAuthenticated && (
+            <>
+              <button 
+                onClick={() => navigate('/my-runs')}
+                className="text-sm font-medium hover:text-primary transition-colors"
+              >
+                Minhas Runs
+              </button>
+              <button 
+                onClick={() => navigate('/stats')}
+                className="text-sm font-medium hover:text-primary transition-colors"
+              >
+                Estatísticas
+              </button>
+            </>
+          )}
           <a className="text-sm font-medium hover:text-primary transition-colors" href="#">About</a>
         </div>
         
@@ -56,6 +72,22 @@ export const NavBar = () => {
                 </div>
                 
                 <div className="py-2">
+                  <button
+                    onClick={() => navigate('/my-runs')}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-light dark:text-text-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-primary" style={{ fontSize: 20 }}>list_alt</span>
+                    <span>Minhas Runs</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => navigate('/stats')}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-light dark:text-text-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-primary" style={{ fontSize: 20 }}>analytics</span>
+                    <span>Estatísticas</span>
+                  </button>
+                  
                   <button
                     onClick={() => navigate('/profile')}
                     className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-light dark:text-text-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors"
