@@ -35,17 +35,36 @@ export function MovesPage() {
     }
   };
 
-  // Buscar move específico por nome
-  const searchMoveByName = async (name: string) => {
+  // Buscar moves que contenham o termo
+  const searchMoves = async (searchQuery: string) => {
     try {
       setIsSearching(true);
-      const searchName = name.toLowerCase().trim().replace(/\s+/g, '-');
-      const moveDetail = await movesService.getMoveDetails(searchName);
-      setMoves([moveDetail]);
-      showToast(`Move "${moveDetail.name}" encontrado!`, 'success');
+      const query = searchQuery.toLowerCase().trim();
+      
+      // Buscar lista completa (limitado a 1000 moves)
+      const listResponse = await movesService.getMovesList(0, 1000);
+      
+      // Filtrar moves que contenham o termo de busca
+      const matchingMoves = listResponse.results.filter(move => 
+        move.name.includes(query)
+      );
+
+      if (matchingMoves.length === 0) {
+        setMoves([]);
+        showToast(`Nenhum move encontrado para "${searchQuery}"`, 'info');
+        return;
+      }
+
+      // Limitar a 20 resultados para não sobrecarregar
+      const limitedMoves = matchingMoves.slice(0, 20);
+      const movesDetails = await movesService.getMovesDetails(limitedMoves.map(m => m.name));
+      
+      setMoves(movesDetails);
+      showToast(`${matchingMoves.length} move(s) encontrado(s)`, 'success');
     } catch (error) {
-      console.error('Erro ao buscar move:', error);
+      console.error('Erro ao buscar moves:', error);
       setMoves([]);
+      showToast('Erro ao buscar moves', 'error');
     } finally {
       setIsSearching(false);
     }
@@ -63,7 +82,7 @@ export function MovesPage() {
     const timer = setTimeout(() => {
       if (searchInput.trim() !== '') {
         setSearchTerm(searchInput);
-        searchMoveByName(searchInput);
+        searchMoves(searchInput);
       } else {
         setSearchTerm('');
         fetchMoves(currentPage);
@@ -144,7 +163,7 @@ export function MovesPage() {
           </div>
           <input
             type="text"
-            placeholder="Buscar move pelo nome (ex: shadow-ball, thunderbolt)..."
+            placeholder="Buscar move (ex: flame, thunder, punch)..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full pl-10 pr-10 py-3 rounded-lg border border-border-light dark:border-border-dark bg-component-light dark:bg-component-dark focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
