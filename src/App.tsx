@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { NavBar, Footer } from './components/layout';
 import { ToastContainer } from './components/ui/ToastContainer';
@@ -11,26 +10,24 @@ import { EditProfilePage } from './features/profile/EditProfilePage';
 
 export const App = () => {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <Router>
-          <div className="min-h-screen flex flex-col">
-            <NavBar />
-            <Routes>
-              <Route path="/" element={<LeaderboardPage />} />
-              <Route path="/run/:id" element={<RunDetailsPage />} />
-              <Route path="/submit" element={<SubmitRunPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/reset-password" element={<ResetPasswordPage />} />
-              <Route path="/profile" element={<EditProfilePage />} />
-            </Routes>
-            <Footer />
-            <ToastContainer />
+    <ToastProvider>
+      <Router>
+        <div className="min-h-screen flex flex-col">
+          <NavBar />
+          <Routes>
+            <Route path="/" element={<LeaderboardPage />} />
+            <Route path="/run/:id" element={<RunDetailsPage />} />
+            <Route path="/submit" element={<SubmitRunPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/profile" element={<EditProfilePage />} />
+          </Routes>
+          <Footer />
+          <ToastContainer />
           </div>
         </Router>
       </ToastProvider>
-    </AuthProvider>
   );
 };

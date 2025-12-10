@@ -34,7 +34,6 @@ export function ToastProvider({ children }: ToastProviderProps) {
     
     setToasts((prev) => [...prev, newToast]);
 
-    // Auto-remove após 5 segundos
     setTimeout(() => {
       removeToast(id);
     }, 5000);
