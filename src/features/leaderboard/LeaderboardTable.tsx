@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useRuns, useAvailableGames } from '../../hooks/useRuns';
+import { useAuthStore } from '../../stores/authStore';
 
 export const LeaderboardTable = () => {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [page, setPage] = useState(0);
   const [size] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
@@ -171,20 +173,37 @@ export const LeaderboardTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {runs.map((run, index) => (
-                  <tr 
-                    key={run.id} 
-                    onClick={() => navigate(`/run/${run.id}`)}
-                    className="border-b border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors cursor-pointer"
-                  >
-                    <td className="px-6 py-4 font-bold text-center">{page * size + index + 1}</td>
-                    <td className="px-6 py-4"><div className="flex items-center gap-3"><span className="font-medium">{run.game}</span></div></td>
-                    <td className="px-6 py-4 font-mono font-medium">{run.runTime}</td>
-                    <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{run.pokedexStatus}</td>
-                    <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{run.pokemonTeam.join(', ') || '-'}</td>
-                    <td className="px-6 py-4 font-medium">{run.user.username}</td>
-                  </tr>
-                ))}
+                {runs.map((run, index) => {
+                  const isUserRun = user && run.user.username === user.username;
+                  return (
+                    <tr 
+                      key={run.id} 
+                      onClick={() => navigate(`/run/${run.id}`)}
+                      className={`border-b border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors cursor-pointer ${
+                        isUserRun 
+                          ? 'bg-primary/5 dark:bg-primary/10 border-l-4 border-l-primary' 
+                          : ''
+                      }`}
+                    >
+                      <td className="px-6 py-4 font-bold text-center">{page * size + index + 1}</td>
+                      <td className="px-6 py-4"><div className="flex items-center gap-3"><span className="font-medium">{run.game}</span></div></td>
+                      <td className="px-6 py-4 font-mono font-medium">{run.runTime}</td>
+                      <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{run.pokedexStatus}</td>
+                      <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{run.pokemonTeam.join(', ') || '-'}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{run.user.username}</span>
+                          {isUserRun && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold">
+                              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>person</span>
+                              Você
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { runsService } from '../../services/runs.service';
+import { pokemonService } from '../../services/pokemon.service';
 import { useToast } from '../../hooks/useToast';
 import type { RunsCountByGame, AvgRunTimeByGame, TopPokemon } from '../../types/api.types';
 
-// Utilitário para converter minutos em formato HH:MM
 const formatMinutes = (totalMinutes: number): string => {
   const hours = Math.floor(totalMinutes / 60);
   const minutes = Math.round(totalMinutes % 60);
@@ -15,6 +15,7 @@ export function StatsPage() {
   const [countByGame, setCountByGame] = useState<RunsCountByGame[]>([]);
   const [avgTimeByGame, setAvgTimeByGame] = useState<AvgRunTimeByGame[]>([]);
   const [topPokemons, setTopPokemons] = useState<TopPokemon[]>([]);
+  const [pokemonSprites, setPokemonSprites] = useState<Map<string, string | null>>(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchStats = async () => {
@@ -28,6 +29,13 @@ export function StatsPage() {
       setCountByGame(countData);
       setAvgTimeByGame(avgTimeData);
       setTopPokemons(topPokemonsData);
+
+      // Buscar sprites dos top pokémons
+      if (topPokemonsData.length > 0) {
+        const pokemonNames = topPokemonsData.map(p => p.pokemon);
+        const sprites = await pokemonService.getPokemonSprites(pokemonNames);
+        setPokemonSprites(sprites);
+      }
     } catch (error) {
       showToast('Erro ao carregar estatísticas', 'error');
       console.error('Erro ao buscar estatísticas:', error);
@@ -247,7 +255,21 @@ export function StatsPage() {
 
                 {/* Content */}
                 <div className="text-center mt-2">
-                  <h3 className="font-bold text-text-light dark:text-text-dark mb-1 mt-4">
+                  {/* Sprite do Pokémon */}
+                  <div className="flex justify-center mb-2">
+                    {pokemonSprites.get(item.pokemon) ? (
+                      <img
+                        src={pokemonSprites.get(item.pokemon)!}
+                        alt={item.pokemon}
+                        className="w-20 h-20 object-contain"
+                      />
+                    ) : (
+                      <div className="w-20 h-20 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-4xl text-primary">catching_pokemon</span>
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="font-bold text-text-light dark:text-text-dark mb-1 capitalize">
                     {item.pokemon}
                   </h3>
                   <p className="text-2xl font-bold text-primary">
@@ -264,14 +286,28 @@ export function StatsPage() {
       </div>
 
       {/* Export Button */}
-      <div className="mt-8 text-center">
-        <button
-          onClick={handleExportCSV}
-          className="px-8 py-3 bg-accent-green text-white rounded-lg font-medium hover:bg-accent-green/90 transition-colors flex items-center gap-2 mx-auto"
-        >
-          <span className="material-symbols-outlined">download</span>
-          Exportar Dados (CSV)
-        </button>
+      <div className="mt-8">
+        <div className="bg-gradient-to-r from-accent-green/10 to-accent-blue/10 dark:from-accent-green/20 dark:to-accent-blue/20 p-6 rounded-xl border border-accent-green/30 dark:border-accent-green/40">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-center md:text-left">
+              <h3 className="text-lg font-bold text-text-light dark:text-text-dark mb-1 flex items-center gap-2 justify-center md:justify-start">
+                <span className="material-symbols-outlined text-accent-green">description</span>
+                Exportar Relatório Completo
+              </h3>
+              <p className="text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                Baixe todos os dados em formato CSV para análise externa
+              </p>
+            </div>
+            <button
+              onClick={handleExportCSV}
+              className="group relative px-8 py-3 bg-gradient-to-r from-accent-green to-accent-green/80 text-white rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-3 overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+              <span className="material-symbols-outlined relative z-10 text-xl">download</span>
+              <span className="relative z-10">Exportar CSV</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

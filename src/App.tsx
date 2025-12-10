@@ -9,6 +9,7 @@ import { LoginPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage } from '
 import { EditProfilePage } from './features/profile/EditProfilePage';
 import { MyRunsPage } from './features/my-runs';
 import { StatsPage } from './features/stats';
+import { MovesPage } from './features/moves';
 
 export const App = () => {
   return (
@@ -22,6 +23,7 @@ export const App = () => {
             <Route path="/submit" element={<SubmitRunPage />} />
             <Route path="/my-runs" element={<MyRunsPage />} />
             <Route path="/stats" element={<StatsPage />} />
+            <Route path="/moves" element={<MovesPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />

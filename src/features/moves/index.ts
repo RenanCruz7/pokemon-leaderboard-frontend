@@ -1,0 +1,1 @@
+export { MovesPage } from './MovesPage';

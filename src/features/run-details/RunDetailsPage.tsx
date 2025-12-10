@@ -1,10 +1,19 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { useRun } from '../../hooks/useRuns';
+import { pokemonService } from '../../services/pokemon.service';
 
 export const RunDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { run, isLoading, error } = useRun(id || '');
+  const [pokemonSprites, setPokemonSprites] = useState<Map<string, string | null>>(new Map());
+
+  useEffect(() => {
+    if (run) {
+      pokemonService.getPokemonSprites(run.pokemonTeam).then(setPokemonSprites);
+    }
+  }, [run]);
 
   if (isLoading) {
     return (
@@ -70,12 +79,23 @@ export const RunDetailsPage = () => {
             <div>
               <h3 className="text-lg font-semibold text-text-light dark:text-text-dark mb-3">Equipe Pokémon</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {run.pokemonTeam.map((pokemon, index) => (
-                  <div key={index} className="flex items-center gap-3 rounded-lg bg-background-light dark:bg-background-dark p-3 border border-border-light dark:border-border-dark">
-                    <span className="material-symbols-outlined text-primary">capture</span>
-                    <span className="font-medium">{pokemon}</span>
-                  </div>
-                ))}
+                {run.pokemonTeam.map((pokemon, index) => {
+                  const sprite = pokemonSprites.get(pokemon);
+                  return (
+                    <div key={index} className="flex items-center gap-3 rounded-lg bg-background-light dark:bg-background-dark p-3 border border-border-light dark:border-border-dark">
+                      {sprite ? (
+                        <img 
+                          src={sprite} 
+                          alt={pokemon} 
+                          className="w-12 h-12 object-contain"
+                        />
+                      ) : (
+                        <span className="material-symbols-outlined text-primary">capture</span>
+                      )}
+                      <span className="font-medium capitalize">{pokemon}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 

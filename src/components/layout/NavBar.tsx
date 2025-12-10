@@ -33,6 +33,12 @@ export const NavBar = () => {
           >
             Leaderboard
           </button>
+          <button 
+            onClick={() => navigate('/moves')}
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
+            Moves
+          </button>
           {isAuthenticated && (
             <>
               <button 
@@ -72,6 +78,14 @@ export const NavBar = () => {
                 </div>
                 
                 <div className="py-2">
+                  <button
+                    onClick={() => navigate('/moves')}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-light dark:text-text-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-primary" style={{ fontSize: 20 }}>swords</span>
+                    <span>Moves</span>
+                  </button>
+                  
                   <button
                     onClick={() => navigate('/my-runs')}
                     className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-light dark:text-text-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors"
