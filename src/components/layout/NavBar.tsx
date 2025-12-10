@@ -34,6 +34,12 @@ export const NavBar = () => {
             Leaderboard
           </button>
           <button 
+            onClick={() => navigate('/pokemon')}
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
+            Pokémon
+          </button>
+          <button 
             onClick={() => navigate('/moves')}
             className="text-sm font-medium hover:text-primary transition-colors"
           >
@@ -78,6 +84,14 @@ export const NavBar = () => {
                 </div>
                 
                 <div className="py-2">
+                  <button
+                    onClick={() => navigate('/pokemon')}
+                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-light dark:text-text-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-primary" style={{ fontSize: 20 }}>pets</span>
+                    <span>Pokémon</span>
+                  </button>
+                  
                   <button
                     onClick={() => navigate('/moves')}
                     className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-light dark:text-text-dark hover:bg-background-light dark:hover:bg-background-dark transition-colors"

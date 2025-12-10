@@ -159,54 +159,106 @@ export const LeaderboardTable = () => {
           </div>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-border-light dark:border-border-dark bg-component-light dark:bg-component-dark">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[1000px] text-left text-sm">
-              <thead className="border-b border-border-light dark:border-border-dark text-xs uppercase text-text-secondary-light dark:text-text-secondary-dark">
-                <tr>
-                  <th className="px-6 py-4 font-semibold w-12 text-center">#</th>
-                  <th className="px-6 py-4 font-semibold">Game</th>
-                  <th className="px-6 py-4 font-semibold">Time</th>
-                  <th className="px-6 py-4 font-semibold">Pokédex</th>
-                  <th className="px-6 py-4 font-semibold">Team</th>
-                  <th className="px-6 py-4 font-semibold">User</th>
-                </tr>
-              </thead>
-              <tbody>
-                {runs.map((run, index) => {
-                  const isUserRun = user && run.user.username === user.username;
-                  return (
-                    <tr 
-                      key={run.id} 
-                      onClick={() => navigate(`/run/${run.id}`)}
-                      className={`border-b border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 transition-colors cursor-pointer ${
-                        isUserRun 
-                          ? 'bg-primary/5 dark:bg-primary/10 border-l-4 border-l-primary' 
-                          : ''
-                      }`}
-                    >
-                      <td className="px-6 py-4 font-bold text-center">{page * size + index + 1}</td>
-                      <td className="px-6 py-4"><div className="flex items-center gap-3"><span className="font-medium">{run.game}</span></div></td>
-                      <td className="px-6 py-4 font-mono font-medium">{run.runTime}</td>
-                      <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{run.pokedexStatus}</td>
-                      <td className="px-6 py-4 text-text-secondary-light dark:text-text-secondary-dark">{run.pokemonTeam.join(', ') || '-'}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{run.user.username}</span>
-                          {isUserRun && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold">
-                              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>person</span>
-                              Você
+        <div className="space-y-3">
+          {runs.map((run, index) => {
+            const isUserRun = user && run.user.username === user.username;
+            const position = page * size + index + 1;
+            const getMedalColor = (pos: number) => {
+              if (pos === 1) return 'bg-accent-yellow text-yellow-900';
+              if (pos === 2) return 'bg-gray-300 text-gray-800';
+              if (pos === 3) return 'bg-orange-600 text-white';
+              return 'bg-component-light dark:bg-component-dark text-text-light dark:text-text-dark';
+            };
+
+            return (
+              <div
+                key={run.id}
+                onClick={() => navigate(`/run/${run.id}`)}
+                className={`group bg-component-light dark:bg-component-dark rounded-xl border-2 transition-all cursor-pointer hover:shadow-lg ${
+                  isUserRun
+                    ? 'border-primary bg-primary/5 dark:bg-primary/10'
+                    : 'border-border-light dark:border-border-dark hover:border-primary'
+                }`}
+              >
+                <div className="p-4 sm:p-6">
+                  <div className="flex items-center gap-4">
+                    {/* Position Badge */}
+                    <div className={`flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center font-black text-lg sm:text-xl ${getMedalColor(position)}`}>
+                      {position <= 3 ? (
+                        <span className="material-symbols-outlined text-2xl sm:text-3xl">emoji_events</span>
+                      ) : (
+                        position
+                      )}
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-4 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg sm:text-xl font-bold text-text-light dark:text-text-dark mb-1">
+                            {run.game}
+                          </h3>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="inline-flex items-center gap-1 text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>person</span>
+                              {run.user.username}
                             </span>
-                          )}
+                            {isUserRun && (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold">
+                                <span className="material-symbols-outlined" style={{ fontSize: 12 }}>check_circle</span>
+                                Sua Run
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                        
+                        {/* Time Badge */}
+                        <div className="bg-primary/10 dark:bg-primary/20 px-4 py-2 rounded-lg">
+                          <div className="text-xs text-text-secondary-light dark:text-text-secondary-dark mb-1">Tempo</div>
+                          <div className="text-xl sm:text-2xl font-black font-mono text-primary">{run.runTime}</div>
+                        </div>
+                      </div>
+
+                      {/* Stats Grid */}
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        <div className="bg-background-light dark:bg-background-dark rounded-lg p-3">
+                          <div className="flex items-center gap-2 text-text-secondary-light dark:text-text-secondary-dark text-xs mb-1">
+                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>menu_book</span>
+                            Pokédex
+                          </div>
+                          <div className="text-lg font-bold text-text-light dark:text-text-dark">{run.pokedexStatus}</div>
+                        </div>
+                        
+                        <div className="bg-background-light dark:bg-background-dark rounded-lg p-3">
+                          <div className="flex items-center gap-2 text-text-secondary-light dark:text-text-secondary-dark text-xs mb-1">
+                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>groups</span>
+                            Team Size
+                          </div>
+                          <div className="text-lg font-bold text-text-light dark:text-text-dark">{run.pokemonTeam.length} Pokémon</div>
+                        </div>
+                      </div>
+
+                      {/* Pokemon Team */}
+                      <div className="bg-background-light dark:bg-background-dark rounded-lg p-3">
+                        <div className="text-xs text-text-secondary-light dark:text-text-secondary-dark mb-2 font-semibold">EQUIPE</div>
+                        <div className="flex flex-wrap gap-2">
+                          {run.pokemonTeam.map((pokemon, idx) => (
+                            <span
+                              key={idx}
+                              className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-component-light dark:bg-component-dark text-text-light dark:text-text-dark text-sm border border-border-light dark:border-border-dark"
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>pets</span>
+                              {pokemon}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 
