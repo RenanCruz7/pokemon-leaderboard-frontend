@@ -61,7 +61,6 @@ export const NavBar = () => {
               </button>
             </>
           )}
-          <a className="text-sm font-medium hover:text-primary transition-colors" href="#">About</a>
         </div>
         
         {isAuthenticated ? (

@@ -164,9 +164,9 @@ export const LeaderboardTable = () => {
             const isUserRun = user && run.user.username === user.username;
             const position = page * size + index + 1;
             const getMedalColor = (pos: number) => {
-              if (pos === 1) return 'bg-accent-yellow text-yellow-900';
-              if (pos === 2) return 'bg-gray-300 text-gray-800';
-              if (pos === 3) return 'bg-orange-600 text-white';
+              if (pos === 1) return 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white shadow-lg shadow-yellow-500/50';
+              if (pos === 2) return 'bg-gradient-to-br from-gray-300 to-gray-500 text-gray-900 shadow-lg shadow-gray-400/50';
+              if (pos === 3) return 'bg-gradient-to-br from-orange-400 to-orange-700 text-white shadow-lg shadow-orange-500/50';
               return 'bg-component-light dark:bg-component-dark text-text-light dark:text-text-dark';
             };
 
